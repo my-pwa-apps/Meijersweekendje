@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Admin - Datumprikker Configuratie</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -22,8 +23,8 @@
                 <h2>Wachtwoord Vereist</h2>
                 <p>Voer het admin wachtwoord in om toegang te krijgen.</p>
                 <div class="input-group">
-                    <input type="password" id="adminPassword" placeholder="Wachtwoord">
-                    <button id="loginBtn" class="primary-btn">
+                    <input type="password" id="adminPassword" placeholder="Wachtwoord" aria-label="Admin wachtwoord" autocomplete="current-password">
+                    <button id="loginBtn" class="primary-btn" aria-label="Inloggen">
                         <span class="material-icons">lock_open</span>
                         <span>Inloggen</span>
                     </button>
@@ -40,12 +41,18 @@
                 
                 <div class="form-group">
                     <label for="appName">Naam van de Datumprikker</label>
-                    <input type="text" id="appName" placeholder="bijv. Meijersweekendje">
+                    <input type="text" id="appName" placeholder="bijv. Meijersweekendje" maxlength="50">
                 </div>
 
                 <div class="form-group">
                     <label for="appSubtitle">Ondertitel</label>
-                    <input type="text" id="appSubtitle" placeholder="bijv. Vind het perfecte weekend voor de familie">
+                    <input type="text" id="appSubtitle" placeholder="bijv. Vind het perfecte weekend voor de familie" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="accessCode">Toegangscode voor Families</label>
+                    <input type="text" id="accessCode" class="access-code-input" placeholder="bijv. WEEKEND2025" maxlength="20">
+                    <p class="help-text">Families moeten deze code invoeren om de app te gebruiken. Deel deze code alleen met de deelnemers.</p>
                 </div>
 
                 <h2>Families/Deelnemers</h2>
@@ -72,7 +79,7 @@
                     </select>
                 </div>
 
-                <div class="form-group" id="weekStartDayGroup" style="display: none;">
+                <div class="form-group" id="weekStartDayGroup">
                     <label for="weekStartDay">Startdag van de Week</label>
                     <select id="weekStartDay">
                         <option value="1">Maandag</option>
@@ -97,7 +104,39 @@
                     </div>
                 </div>
 
-                <div class="form-group" id="customDatesGroup" style="display: none;">
+                <div class="form-group" id="manualSelectionGroup">
+                    <label>📅 Extra Datums Handmatig Selecteren</label>
+                    <p class="help-text">Selecteer specifieke datums die je wilt toevoegen naast de periode hierboven. Klik op een datum in de kalender om deze toe te voegen of te verwijderen.</p>
+                    <div class="calendar-picker">
+                        <div class="calendar-header">
+                            <button type="button" id="prevMonth" class="calendar-nav-btn">
+                                <span class="material-icons">chevron_left</span>
+                            </button>
+                            <div id="calendarMonthYear" class="calendar-month-year"></div>
+                            <button type="button" id="nextMonth" class="calendar-nav-btn">
+                                <span class="material-icons">chevron_right</span>
+                            </button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Ma</div>
+                            <div>Di</div>
+                            <div>Wo</div>
+                            <div>Do</div>
+                            <div>Vr</div>
+                            <div>Za</div>
+                            <div>Zo</div>
+                        </div>
+                        <div id="calendarDays" class="calendar-days"></div>
+                    </div>
+                    <div id="selectedDatesList" class="selected-dates-list">
+                        <strong>Geselecteerde datums:</strong>
+                        <div id="selectedDatesItems" class="selected-dates-items">
+                            <em>Geen datums geselecteerd</em>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="customDatesGroup">
                     <label for="customDates">Custom Datums (één per regel, formaat: YYYY-MM-DD)</label>
                     <textarea id="customDates" rows="8" placeholder="2025-12-24&#10;2025-12-25&#10;2026-01-01&#10;2026-04-18"></textarea>
                 </div>

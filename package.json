@@ -1,24 +1,34 @@
 {
   "name": "meijersweekendje",
-  "version": "1.0.0",
-  "description": "",
-  "main": "admin.js",
+  "version": "2.0.0",
+  "description": "Progressive Web App voor het plannen van weekenden en datums met realtime synchronisatie",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx http-server -p 8080",
+    "generate-icons": "node generate-icons.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/my-pwa-apps/Meijersweekendje.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "pwa",
+    "datumprikker",
+    "weekend-planner",
+    "firebase",
+    "realtime"
+  ],
+  "author": "Bart Meijer",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/my-pwa-apps/Meijersweekendje/issues"
   },
   "homepage": "https://github.com/my-pwa-apps/Meijersweekendje#readme",
   "dependencies": {
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

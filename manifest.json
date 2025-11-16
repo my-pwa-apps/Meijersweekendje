@@ -1,13 +1,15 @@
 {
   "name": "Meijersweekendje - Datumprikker",
   "short_name": "Datumprikker",
-  "description": "Plan het perfecte weekend of datum met je familie of vrienden",
+  "description": "Plan het perfecte weekend of datum met je familie of vrienden. Realtime synchronisatie en beschikbaarheidsbeheer.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#a8e6cf",
   "theme_color": "#4a9d8f",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "lang": "nl",
+  "dir": "ltr",
   "icons": [
     {
       "src": "icon-192.png",
@@ -22,19 +24,5 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "lifestyle"],
-  "screenshots": [
-    {
-      "src": "screenshot-mobile.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ]
+  "categories": ["productivity", "lifestyle"]
 }

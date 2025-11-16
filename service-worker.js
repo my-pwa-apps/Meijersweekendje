@@ -1,4 +1,4 @@
-const CACHE_NAME = 'datumprikker-v1';
+const CACHE_NAME = 'datumprikker-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -18,13 +18,8 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch((error) => {
-        console.error('Cache install failed:', error);
-      })
+      .then((cache) => cache.addAll(urlsToCache))
+      .catch((error) => console.error('Cache install failed:', error))
   );
   self.skipWaiting();
 });
@@ -32,60 +27,48 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((cacheNames) => Promise.all(
+        cacheNames
+          .filter(cacheName => cacheName !== CACHE_NAME)
+          .map(cacheName => caches.delete(cacheName))
+      ))
   );
   self.clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
-  // Skip Firebase requests - always go to network
-  if (event.request.url.includes('firebasedatabase.app') || 
-      event.request.url.includes('googleapis.com')) {
+  // Skip Firebase and external API requests - always go to network
+  const url = event.request.url;
+  if (url.includes('firebasedatabase.app') || 
+      url.includes('googleapis.com') ||
+      url.includes('gstatic.com') ||
+      event.request.method !== 'GET') {
     return;
   }
 
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
 
-        // Clone the request
-        const fetchRequest = event.request.clone();
+        return fetch(event.request)
+          .then((response) => {
+            // Only cache valid responses
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
 
-        return fetch(fetchRequest).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, responseToCache));
+
             return response;
-          }
-
-          // Clone the response
-          const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
-        });
-      })
-      .catch((error) => {
-        console.error('Fetch failed:', error);
-        // Return offline page if available
-        return caches.match('./index.html');
+          })
+          .catch(() => caches.match('./index.html'));
       })
   );
 });

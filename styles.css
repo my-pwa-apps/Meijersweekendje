@@ -45,6 +45,110 @@ header h1 {
     letter-spacing: 1px;
 }
 
+/* Access Code Screen */
+.access-code-screen {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 48px 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 
+                0 10px 30px rgba(0,0,0,0.2),
+                0 0 0 1px rgba(255,255,255,0.1) inset;
+    animation: slideUp 0.6s ease-out;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.access-code-box {
+    text-align: center;
+}
+
+.lock-icon {
+    font-size: 64px;
+    color: #4a9d8f;
+    margin-bottom: 20px;
+}
+
+.access-code-box h2 {
+    color: #1f2937;
+    margin-bottom: 16px;
+    font-size: 2em;
+    font-weight: 500;
+}
+
+.access-code-box p {
+    color: #6b7280;
+    margin-bottom: 32px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.code-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.code-input-group input {
+    padding: 18px 24px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    transition: border-color 0.3s ease;
+}
+
+.code-input-group input:focus {
+    outline: none;
+    border-color: #4a9d8f;
+    box-shadow: 0 0 0 3px rgba(74, 157, 143, 0.1);
+}
+
+.code-input-group .primary-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #4a9d8f 0%, #2c7a6b 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    font-size: 1.1em;
+    border-radius: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(74, 157, 143, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 157, 143, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.error-message {
+    color: #ef4444;
+    background: #fee2e2;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+}
+
 /* Family Selection */
 .family-selection {
     background: rgba(255, 255, 255, 0.98);
@@ -54,8 +158,8 @@ header h1 {
                 0 10px 30px rgba(0,0,0,0.2),
                 0 0 0 1px rgba(255,255,255,0.1) inset;
     animation: slideUp 0.6s ease-out;
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     position: relative;
 }
 
@@ -164,8 +268,8 @@ header h1 {
                 0 10px 30px rgba(0,0,0,0.2),
                 0 0 0 1px rgba(255,255,255,0.1) inset;
     animation: slideUp 0.6s ease-out;
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     position: relative;
 }
 
@@ -217,7 +321,7 @@ header h1 {
     font-size: 1em;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
     box-shadow: 0 4px 16px rgba(0,0,0,0.15),
                 0 2px 8px rgba(0,0,0,0.1),
                 0 0 0 1px rgba(102,126,234,0.1) inset;
@@ -299,6 +403,28 @@ header h1 {
 .dot.two { color: #f59e0b; }
 .dot.one { color: #ef4444; }
 
+/* Availability colors */
+.weekend-card.availability-4,
+.status-count.count-4 { 
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #10b981;
+}
+.weekend-card.availability-3,
+.status-count.count-3 { 
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #3b82f6;
+}
+.weekend-card.availability-2,
+.status-count.count-2 { 
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #f59e0b;
+}
+.weekend-card.availability-1,
+.status-count.count-1 { 
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #ef4444;
+}
+
 .filters {
     margin-bottom: 24px;
     padding: 20px;
@@ -347,8 +473,8 @@ header h1 {
     box-shadow: 0 6px 20px rgba(0,0,0,0.12),
                 0 3px 10px rgba(0,0,0,0.08),
                 0 0 0 1px rgba(255,255,255,0.3) inset;
-    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     transform: translateY(0);
     border-left: 4px solid #e5e7eb;
 }
@@ -368,22 +494,10 @@ header h1 {
     border-left: 6px solid #4a9d8f;
 }
 
-.weekend-card.availability-4 { 
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border-left: 4px solid #059669;
-}
-.weekend-card.availability-3 { 
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-left: 4px solid #2563eb;
-}
-.weekend-card.availability-2 { 
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border-left: 4px solid #d97706;
-}
-.weekend-card.availability-1 { 
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-left: 4px solid #dc2626;
-}
+.weekend-card.availability-4 { border-left: 4px solid #059669; }
+.weekend-card.availability-3 { border-left: 4px solid #2563eb; }
+.weekend-card.availability-2 { border-left: 4px solid #d97706; }
+.weekend-card.availability-1 { border-left: 4px solid #dc2626; }
 
 .weekend-date {
     font-size: 1.6em;
@@ -433,22 +547,6 @@ header h1 {
     background: #f3f4f6;
 }
 
-.status-count.count-4 { 
-    color: #10b981; 
-    background: #d1fae5;
-}
-.status-count.count-3 { 
-    color: #3b82f6; 
-    background: #dbeafe;
-}
-.status-count.count-2 { 
-    color: #f59e0b; 
-    background: #fef3c7;
-}
-.status-count.count-1 { 
-    color: #ef4444; 
-    background: #fee2e2;
-}
 .status-count.count-0 { 
     color: #9ca3af; 
     background: #f3f4f6;
@@ -495,8 +593,8 @@ header h1 {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -678,6 +776,28 @@ header h1 {
 
     .subtitle {
         font-size: 1.1em;
+    }
+
+    .access-code-screen {
+        padding: 32px 24px;
+        border-radius: 12px;
+    }
+
+    .lock-icon {
+        font-size: 48px;
+    }
+
+    .access-code-box h2 {
+        font-size: 1.5em;
+    }
+
+    .access-code-box p {
+        font-size: 1em;
+    }
+
+    .code-input-group input {
+        font-size: 1.1em;
+        padding: 14px 20px;
     }
 
     .family-selection {

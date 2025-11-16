@@ -28,6 +28,10 @@ let config = null;
 let families = ['Hoorn', 'Limmen', 'IJburg', 'Versailles'];
 
 // DOM Elements
+const accessCodeScreen = document.getElementById('accessCodeScreen');
+const familyAccessCode = document.getElementById('familyAccessCode');
+const accessLoginBtn = document.getElementById('accessLoginBtn');
+const accessCodeError = document.getElementById('accessCodeError');
 const familySelection = document.getElementById('familySelection');
 const weekendView = document.getElementById('weekendView');
 const selectedFamilySpan = document.getElementById('selectedFamily');
@@ -38,15 +42,71 @@ const loading = document.getElementById('loading');
 const celebration = document.getElementById('celebration');
 const closeCelebrationBtn = document.getElementById('closeCelebration');
 
+// Access control
+let isAccessGranted = false;
+
 // No setup needed for Firebase - it's automatic!
 
 // Generate dates based on config
 function generateWeekends() {
     const dates = [];
+    const manualDates = new Set(); // Track manually selected dates
     const dateType = config?.date_type || 'weekends';
     const startDate = config?.date_range_start ? new Date(config.date_range_start) : new Date();
     const endDate = config?.date_range_end ? new Date(config.date_range_end) : new Date('2026-12-31');
     
+    // First, add manually selected dates
+    if (config?.selected_manual_dates && config.selected_manual_dates.length > 0) {
+        config.selected_manual_dates.forEach(dateStr => {
+            const date = new Date(dateStr + 'T12:00:00');
+            manualDates.add(formatDateId(date));
+            
+            if (dateType === 'weekends') {
+                const friday = new Date(date);
+                const sunday = new Date(date);
+                sunday.setDate(sunday.getDate() + 2);
+                dates.push({
+                    id: formatDateId(friday),
+                    friday: new Date(friday),
+                    sunday: new Date(sunday),
+                    label: formatWeekendLabel(friday),
+                    manual: true
+                });
+            } else if (dateType === 'midweek') {
+                const monday = new Date(date);
+                const friday = new Date(date);
+                friday.setDate(friday.getDate() + 4);
+                dates.push({
+                    id: formatDateId(monday),
+                    friday: new Date(monday),
+                    sunday: new Date(friday),
+                    label: formatMidweekLabel(monday),
+                    manual: true
+                });
+            } else if (dateType === 'week') {
+                const weekStart = new Date(date);
+                const weekEnd = new Date(date);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                dates.push({
+                    id: formatDateId(weekStart),
+                    friday: new Date(weekStart),
+                    sunday: new Date(weekEnd),
+                    label: formatWeekLabel(weekStart),
+                    manual: true
+                });
+            } else {
+                dates.push({
+                    id: formatDateId(date),
+                    friday: new Date(date),
+                    sunday: new Date(date),
+                    label: formatSingleDayLabel(date),
+                    manual: true
+                });
+            }
+        });
+    }
+    
+    // Then add dates from range (skip if already manually selected)
     if (dateType === 'weekends') {
         // Find the next Friday
         let currentDate = new Date(startDate);
@@ -57,15 +117,19 @@ function generateWeekends() {
         // Generate all Fridays until end date
         while (currentDate <= endDate) {
             const friday = new Date(currentDate);
-            const sunday = new Date(currentDate);
-            sunday.setDate(sunday.getDate() + 2);
+            const dateId = formatDateId(friday);
             
-            dates.push({
-                id: formatDateId(friday),
-                friday: new Date(friday),
-                sunday: new Date(sunday),
-                label: formatWeekendLabel(friday)
-            });
+            if (!manualDates.has(dateId)) {
+                const sunday = new Date(currentDate);
+                sunday.setDate(sunday.getDate() + 2);
+                
+                dates.push({
+                    id: dateId,
+                    friday: new Date(friday),
+                    sunday: new Date(sunday),
+                    label: formatWeekendLabel(friday)
+                });
+            }
             
             // Move to next Friday
             currentDate.setDate(currentDate.getDate() + 7);
@@ -80,15 +144,19 @@ function generateWeekends() {
         // Generate all Mondays until end date (Monday to Friday = 4 days)
         while (currentDate <= endDate) {
             const monday = new Date(currentDate);
-            const friday = new Date(currentDate);
-            friday.setDate(friday.getDate() + 4);
+            const dateId = formatDateId(monday);
             
-            dates.push({
-                id: formatDateId(monday),
-                friday: new Date(monday),
-                sunday: new Date(friday),
-                label: formatMidweekLabel(monday)
-            });
+            if (!manualDates.has(dateId)) {
+                const friday = new Date(currentDate);
+                friday.setDate(friday.getDate() + 4);
+                
+                dates.push({
+                    id: dateId,
+                    friday: new Date(monday),
+                    sunday: new Date(friday),
+                    label: formatMidweekLabel(monday)
+                });
+            }
             
             // Move to next Monday
             currentDate.setDate(currentDate.getDate() + 7);
@@ -104,15 +172,19 @@ function generateWeekends() {
         // Generate all weeks until end date
         while (currentDate <= endDate) {
             const weekStart = new Date(currentDate);
-            const weekEnd = new Date(currentDate);
-            weekEnd.setDate(weekEnd.getDate() + 6);
+            const dateId = formatDateId(weekStart);
             
-            dates.push({
-                id: formatDateId(weekStart),
-                friday: new Date(weekStart),
-                sunday: new Date(weekEnd),
-                label: formatWeekLabel(weekStart)
-            });
+            if (!manualDates.has(dateId)) {
+                const weekEnd = new Date(currentDate);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                dates.push({
+                    id: dateId,
+                    friday: new Date(weekStart),
+                    sunday: new Date(weekEnd),
+                    label: formatWeekLabel(weekStart)
+                });
+            }
             
             // Move to next week
             currentDate.setDate(currentDate.getDate() + 7);
@@ -123,28 +195,39 @@ function generateWeekends() {
         if (customDates.length > 0) {
             customDates.forEach(dateStr => {
                 const date = new Date(dateStr);
-                dates.push({
-                    id: formatDateId(date),
-                    friday: new Date(date),
-                    sunday: new Date(date),
-                    label: formatSingleDayLabel(date)
-                });
+                const dateId = formatDateId(date);
+                
+                if (!manualDates.has(dateId)) {
+                    dates.push({
+                        id: dateId,
+                        friday: new Date(date),
+                        sunday: new Date(date),
+                        label: formatSingleDayLabel(date)
+                    });
+                }
             });
         } else {
             // Fallback: generate all days in range
             let currentDate = new Date(startDate);
             while (currentDate <= endDate) {
-                dates.push({
-                    id: formatDateId(currentDate),
-                    friday: new Date(currentDate),
-                    sunday: new Date(currentDate),
-                    label: formatSingleDayLabel(currentDate)
-                });
+                const dateId = formatDateId(currentDate);
+                
+                if (!manualDates.has(dateId)) {
+                    dates.push({
+                        id: dateId,
+                        friday: new Date(currentDate),
+                        sunday: new Date(currentDate),
+                        label: formatSingleDayLabel(currentDate)
+                    });
+                }
                 
                 currentDate.setDate(currentDate.getDate() + 1);
             }
         }
     }
+    
+    // Sort all dates chronologically
+    dates.sort((a, b) => a.friday - b.friday);
     
     return dates;
 }
@@ -192,6 +275,44 @@ function formatDateRange(friday, sunday) {
     return `${friday.toLocaleDateString('nl-NL', options)} - ${sunday.toLocaleDateString('nl-NL', options)}`;
 }
 
+// Check access code from localStorage
+function checkStoredAccess() {
+    const storedCode = localStorage.getItem('datumprikker_access');
+    if (storedCode && config && storedCode === config.access_code) {
+        isAccessGranted = true;
+        return true;
+    }
+    return false;
+}
+
+// Handle access code login
+function handleAccessLogin() {
+    const enteredCode = familyAccessCode.value.trim().toUpperCase();
+    
+    if (!config || !config.access_code) {
+        // No access code configured, grant access
+        isAccessGranted = true;
+        showFamilySelection();
+        return;
+    }
+    
+    if (enteredCode === config.access_code) {
+        isAccessGranted = true;
+        localStorage.setItem('datumprikker_access', enteredCode);
+        accessCodeError.classList.add('hidden');
+        showFamilySelection();
+    } else {
+        accessCodeError.classList.remove('hidden');
+        familyAccessCode.value = '';
+        familyAccessCode.focus();
+    }
+}
+
+function showFamilySelection() {
+    accessCodeScreen.classList.add('hidden');
+    familySelection.classList.remove('hidden');
+}
+
 // Load configuration from Firebase
 async function loadConfig() {
     try {
@@ -214,6 +335,17 @@ async function loadConfig() {
         // Use defaults if config fails to load
     }
     
+    // Check if access code is required and valid
+    if (!config || !config.access_code || checkStoredAccess()) {
+        isAccessGranted = true;
+        accessCodeScreen.classList.add('hidden');
+        familySelection.classList.remove('hidden');
+    } else {
+        // Show access code screen
+        accessCodeScreen.classList.remove('hidden');
+        familySelection.classList.add('hidden');
+    }
+    
     // Always update family buttons (even with default families)
     const familyButtonsContainer = document.querySelector('.family-buttons');
     if (familyButtonsContainer) {
@@ -226,15 +358,9 @@ async function loadConfig() {
                 <span class="material-icons">home</span>
                 <span>${family}</span>
             `;
-            btn.addEventListener('click', () => {
-                console.log('Family button clicked:', family);
-                selectFamily(family);
-            });
+            btn.addEventListener('click', () => selectFamily(family));
             familyButtonsContainer.appendChild(btn);
         });
-        console.log('Family buttons created:', families.length);
-    } else {
-        console.error('Family buttons container not found!');
     }
 }
 
@@ -244,6 +370,10 @@ async function init() {
     
     await loadConfig();
     weekends = generateWeekends();
+    
+    // Access code event listeners
+    accessLoginBtn.addEventListener('click', handleAccessLogin);
+    familyAccessCode.addEventListener('keypress', (e) => e.key === 'Enter' && handleAccessLogin());
     
     backBtn.addEventListener('click', backToFamilySelection);
     showOnlyFullCheckbox.addEventListener('change', renderWeekends);
@@ -259,7 +389,6 @@ function setupRealtimeListener() {
     const availabilityRef = ref(db, 'availability');
     
     unsubscribe = onValue(availabilityRef, (snapshot) => {
-        console.log('Real-time update received');
         const data = snapshot.val();
         
         availabilities = [];
@@ -271,8 +400,6 @@ function setupRealtimeListener() {
                 });
             });
         }
-        
-        console.log('Total availabilities loaded:', availabilities.length);
         
         if (currentFamily) {
             renderWeekends();
@@ -308,7 +435,6 @@ function backToFamilySelection() {
 
 async function loadAvailabilities() {
     try {
-        console.log('Loading availabilities from Firebase Realtime Database...');
         const availabilityRef = ref(db, 'availability');
         const snapshot = await get(availabilityRef);
         
@@ -316,28 +442,23 @@ async function loadAvailabilities() {
         if (snapshot.exists()) {
             const data = snapshot.val();
             Object.keys(data).forEach(key => {
-                const availability = data[key];
-                console.log('Found availability:', availability);
                 availabilities.push({
                     id: key,
-                    ...availability
+                    ...data[key]
                 });
             });
         }
-        
-        console.log('Total availabilities loaded:', availabilities.length);
         
         if (currentFamily) {
             renderWeekends();
         }
     } catch (error) {
         console.error('Error loading availabilities:', error);
-        console.error('Error details:', error.message, error.code);
         
         if (error.code === 'PERMISSION_DENIED') {
-            alert('Firebase security rules blokkeren het lezen van data.\n\nGa naar Firebase Console > Realtime Database > Rules en stel de regels in zoals beschreven in FIREBASE_INFO.md');
+            alert('Firebase toegang geweigerd. Controleer de beveiligingsregels.');
         } else {
-            alert('Er is een fout opgetreden bij het laden: ' + error.message);
+            alert('Er is een fout opgetreden bij het laden.');
         }
     }
 }
@@ -428,8 +549,6 @@ function renderWeekends() {
 
 async function toggleWeekend(weekendId, isCurrentlySelected) {
     try {
-        console.log('Toggling weekend:', weekendId, 'Selected:', isCurrentlySelected);
-        
         if (isCurrentlySelected) {
             // Deselect - delete from database
             // Find the record with matching weekend_id and family
@@ -438,38 +557,33 @@ async function toggleWeekend(weekendId, isCurrentlySelected) {
             
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                Object.keys(data).forEach(async (key) => {
-                    const record = data[key];
-                    if (record.weekend_id === weekendId && record.family === currentFamily) {
-                        console.log('Deleting record:', key);
-                        const recordRef = ref(db, `availability/${key}`);
-                        await remove(recordRef);
-                    }
-                });
+                const deletePromises = Object.keys(data)
+                    .filter(key => {
+                        const record = data[key];
+                        return record.weekend_id === weekendId && record.family === currentFamily;
+                    })
+                    .map(key => remove(ref(db, `availability/${key}`)));
+                await Promise.all(deletePromises);
             }
         } else {
             // Select - insert into database
-            console.log('Adding availability:', { weekend_id: weekendId, family: currentFamily });
             const availabilityRef = ref(db, 'availability');
-            const newRecordRef = push(availabilityRef);
             await push(availabilityRef, {
                 weekend_id: weekendId,
                 family: currentFamily,
                 created_at: new Date().toISOString()
             });
-            console.log('Record written successfully');
         }
         
         // Real-time listener will handle the update
         
     } catch (error) {
         console.error('Error toggling weekend:', error);
-        console.error('Error details:', error.message, error.code);
         
         if (error.code === 'PERMISSION_DENIED') {
-            alert('Firebase security rules blokkeren deze actie.\n\nGa naar Firebase Console > Realtime Database > Rules en stel de regels in zoals beschreven in FIREBASE_INFO.md');
+            alert('Firebase toegang geweigerd. Controleer de beveiligingsregels.');
         } else {
-            alert('Er is een fout opgetreden: ' + error.message + '\n\nZie console voor details.');
+            alert('Er is een fout opgetreden. Probeer het opnieuw.');
         }
     }
 }
