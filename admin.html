@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Datumprikker Configuratie</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Admin Configuratie</h1>
+            <p class="subtitle">Datumprikker Instellingen</p>
+        </header>
+
+        <!-- Password Screen -->
+        <div id="passwordScreen" class="admin-section">
+            <div class="password-box">
+                <h2>Wachtwoord Vereist</h2>
+                <p>Voer het admin wachtwoord in om toegang te krijgen.</p>
+                <div class="input-group">
+                    <input type="password" id="adminPassword" placeholder="Wachtwoord">
+                    <button id="loginBtn" class="primary-btn">
+                        <span class="material-icons">lock_open</span>
+                        <span>Inloggen</span>
+                    </button>
+                </div>
+                <p id="passwordError" class="error-message hidden">Onjuist wachtwoord</p>
+                <a href="index.html" class="back-link">← Terug naar datumprikker</a>
+            </div>
+        </div>
+
+        <!-- Config Screen -->
+        <div id="configScreen" class="admin-section hidden">
+            <div class="config-form">
+                <h2>Algemene Instellingen</h2>
+                
+                <div class="form-group">
+                    <label for="appName">Naam van de Datumprikker</label>
+                    <input type="text" id="appName" placeholder="bijv. Meijersweekendje">
+                </div>
+
+                <div class="form-group">
+                    <label for="appSubtitle">Ondertitel</label>
+                    <input type="text" id="appSubtitle" placeholder="bijv. Vind het perfecte weekend voor de familie">
+                </div>
+
+                <h2>Families/Deelnemers</h2>
+                <div class="form-group">
+                    <label>Namen van families of deelnemers</label>
+                    <div id="familiesList" class="families-list">
+                        <!-- Family inputs will be added here -->
+                    </div>
+                    <button id="addFamilyBtn" class="secondary-btn">
+                        <span class="material-icons">add</span>
+                        <span>Familie Toevoegen</span>
+                    </button>
+                </div>
+
+                <h2>Datum Instellingen</h2>
+                
+                <div class="form-group">
+                    <label for="dateType">Type Datums</label>
+                    <select id="dateType">
+                        <option value="weekends">Weekenden (vrijdag t/m zondag)</option>
+                        <option value="midweek">Midweek (maandag t/m vrijdag)</option>
+                        <option value="week">Hele weken (7 dagen, startdag configureerbaar)</option>
+                        <option value="single">Losse dagen (vrij in te vullen)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="weekStartDayGroup" style="display: none;">
+                    <label for="weekStartDay">Startdag van de Week</label>
+                    <select id="weekStartDay">
+                        <option value="1">Maandag</option>
+                        <option value="2">Dinsdag</option>
+                        <option value="3">Woensdag</option>
+                        <option value="4">Donderdag</option>
+                        <option value="5">Vrijdag</option>
+                        <option value="6">Zaterdag</option>
+                        <option value="0">Zondag</option>
+                    </select>
+                </div>
+
+                <div id="dateRangeGroup">
+                    <div class="form-group">
+                        <label for="startDate">Start Datum</label>
+                        <input type="date" id="startDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate">Eind Datum</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+
+                <div class="form-group" id="customDatesGroup" style="display: none;">
+                    <label for="customDates">Custom Datums (één per regel, formaat: YYYY-MM-DD)</label>
+                    <textarea id="customDates" rows="8" placeholder="2025-12-24&#10;2025-12-25&#10;2026-01-01&#10;2026-04-18"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button id="saveConfigBtn" class="primary-btn">
+                        <span class="material-icons">save</span>
+                        <span>Configuratie Opslaan</span>
+                    </button>
+                    <button id="logoutBtn" class="secondary-btn">
+                        <span class="material-icons">logout</span>
+                        <span>Uitloggen</span>
+                    </button>
+                </div>
+
+                <div class="danger-zone">
+                    <h2>⚠️ Gevarenzone</h2>
+                    <div class="form-group">
+                        <label>Reset Alle Data</label>
+                        <p class="warning-text">Dit verwijdert alle geselecteerde datums van alle families. Deze actie kan niet ongedaan gemaakt worden!</p>
+                        <button id="resetDataBtn" class="danger-btn">
+                            <span class="material-icons">delete_forever</span>
+                            <span>Alle Data Verwijderen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <p id="saveMessage" class="success-message hidden">Configuratie opgeslagen!</p>
+                <p id="saveError" class="error-message hidden">Fout bij opslaan</p>
+                <p id="resetMessage" class="success-message hidden">Alle data is verwijderd!</p>
+                <p id="resetError" class="error-message hidden">Fout bij verwijderen</p>
+
+                <a href="index.html" class="back-link">← Terug naar datumprikker</a>
+            </div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Laden...</p>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

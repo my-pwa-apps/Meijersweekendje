@@ -22,9 +22,10 @@ let currentFamily = null;
 let weekends = [];
 let availabilities = [];
 let unsubscribe = null;
+let config = null;
 
-// Families
-const families = ['Hoorn', 'Limmen', 'IJburg', 'Versailles'];
+// Families (will be loaded from config)
+let families = ['Hoorn', 'Limmen', 'IJburg', 'Versailles'];
 
 // DOM Elements
 const familySelection = document.getElementById('familySelection');
@@ -39,36 +40,113 @@ const closeCelebrationBtn = document.getElementById('closeCelebration');
 
 // No setup needed for Firebase - it's automatic!
 
-// Generate all weekends from now until December 2026
+// Generate dates based on config
 function generateWeekends() {
-    const weekends = [];
-    const startDate = new Date();
-    const endDate = new Date('2026-12-31');
+    const dates = [];
+    const dateType = config?.date_type || 'weekends';
+    const startDate = config?.date_range_start ? new Date(config.date_range_start) : new Date();
+    const endDate = config?.date_range_end ? new Date(config.date_range_end) : new Date('2026-12-31');
     
-    // Find the next Friday
-    let currentDate = new Date(startDate);
-    while (currentDate.getDay() !== 5) { // 5 = Friday
-        currentDate.setDate(currentDate.getDate() + 1);
+    if (dateType === 'weekends') {
+        // Find the next Friday
+        let currentDate = new Date(startDate);
+        while (currentDate.getDay() !== 5) { // 5 = Friday
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        // Generate all Fridays until end date
+        while (currentDate <= endDate) {
+            const friday = new Date(currentDate);
+            const sunday = new Date(currentDate);
+            sunday.setDate(sunday.getDate() + 2);
+            
+            dates.push({
+                id: formatDateId(friday),
+                friday: new Date(friday),
+                sunday: new Date(sunday),
+                label: formatWeekendLabel(friday)
+            });
+            
+            // Move to next Friday
+            currentDate.setDate(currentDate.getDate() + 7);
+        }
+    } else if (dateType === 'midweek') {
+        // Find the next Monday
+        let currentDate = new Date(startDate);
+        while (currentDate.getDay() !== 1) { // 1 = Monday
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        // Generate all Mondays until end date (Monday to Friday = 4 days)
+        while (currentDate <= endDate) {
+            const monday = new Date(currentDate);
+            const friday = new Date(currentDate);
+            friday.setDate(friday.getDate() + 4);
+            
+            dates.push({
+                id: formatDateId(monday),
+                friday: new Date(monday),
+                sunday: new Date(friday),
+                label: formatMidweekLabel(monday)
+            });
+            
+            // Move to next Monday
+            currentDate.setDate(currentDate.getDate() + 7);
+        }
+    } else if (dateType === 'week') {
+        // Use configured start day (default Monday)
+        const weekStartDay = config?.week_start_day || 1;
+        let currentDate = new Date(startDate);
+        while (currentDate.getDay() !== weekStartDay) {
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        // Generate all weeks until end date
+        while (currentDate <= endDate) {
+            const weekStart = new Date(currentDate);
+            const weekEnd = new Date(currentDate);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            dates.push({
+                id: formatDateId(weekStart),
+                friday: new Date(weekStart),
+                sunday: new Date(weekEnd),
+                label: formatWeekLabel(weekStart)
+            });
+            
+            // Move to next week
+            currentDate.setDate(currentDate.getDate() + 7);
+        }
+    } else {
+        // Generate custom single days
+        const customDates = config?.custom_dates || [];
+        if (customDates.length > 0) {
+            customDates.forEach(dateStr => {
+                const date = new Date(dateStr);
+                dates.push({
+                    id: formatDateId(date),
+                    friday: new Date(date),
+                    sunday: new Date(date),
+                    label: formatSingleDayLabel(date)
+                });
+            });
+        } else {
+            // Fallback: generate all days in range
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                dates.push({
+                    id: formatDateId(currentDate),
+                    friday: new Date(currentDate),
+                    sunday: new Date(currentDate),
+                    label: formatSingleDayLabel(currentDate)
+                });
+                
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
     }
     
-    // Generate all Fridays until end date
-    while (currentDate <= endDate) {
-        const friday = new Date(currentDate);
-        const sunday = new Date(currentDate);
-        sunday.setDate(sunday.getDate() + 2);
-        
-        weekends.push({
-            id: formatDateId(friday),
-            friday: new Date(friday),
-            sunday: new Date(sunday),
-            label: formatWeekendLabel(friday)
-        });
-        
-        // Move to next Friday
-        currentDate.setDate(currentDate.getDate() + 7);
-    }
-    
-    return weekends;
+    return dates;
 }
 
 function formatDateId(date) {
@@ -84,23 +162,80 @@ function formatWeekendLabel(friday) {
     return `${friday.getDate()}-${sunday.getDate()} ${months[friday.getMonth()]}`;
 }
 
+function formatSingleDayLabel(date) {
+    const days = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+    const months = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 
+                   'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+}
+
+function formatMidweekLabel(monday) {
+    const months = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 
+                   'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+    const friday = new Date(monday);
+    friday.setDate(friday.getDate() + 4);
+    
+    return `${monday.getDate()}-${friday.getDate()} ${months[monday.getMonth()]}`;
+}
+
+function formatWeekLabel(monday) {
+    const months = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 
+                   'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+    const sunday = new Date(monday);
+    sunday.setDate(sunday.getDate() + 6);
+    
+    return `${monday.getDate()}-${sunday.getDate()} ${months[monday.getMonth()]}`;
+}
+
 function formatDateRange(friday, sunday) {
     const options = { day: 'numeric', month: 'short' };
     return `${friday.toLocaleDateString('nl-NL', options)} - ${sunday.toLocaleDateString('nl-NL', options)}`;
+}
+
+// Load configuration from Firebase
+async function loadConfig() {
+    try {
+        const configRef = ref(db, 'config');
+        const snapshot = await get(configRef);
+        
+        if (snapshot.exists()) {
+            config = snapshot.val();
+            families = config.families || ['Hoorn', 'Limmen', 'IJburg', 'Versailles'];
+            
+            // Update page title
+            document.querySelector('header h1').textContent = config.app_name || 'Meijersweekendje';
+            document.querySelector('.subtitle').textContent = config.app_subtitle || 'Vind het perfecte weekend voor de familie';
+            document.title = config.app_name || 'Meijersweekendje';
+            
+            // Update family buttons
+            const familyButtonsContainer = document.querySelector('.family-buttons');
+            familyButtonsContainer.innerHTML = '';
+            families.forEach(family => {
+                const btn = document.createElement('button');
+                btn.className = 'family-btn';
+                btn.dataset.family = family;
+                btn.innerHTML = `
+                    <span class="material-icons">home</span>
+                    <span>${family}</span>
+                `;
+                btn.addEventListener('click', () => {
+                    selectFamily(family);
+                });
+                familyButtonsContainer.appendChild(btn);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading config:', error);
+        // Use defaults if config fails to load
+    }
 }
 
 // Initialize
 async function init() {
     loading.classList.remove('hidden');
     
+    await loadConfig();
     weekends = generateWeekends();
-    
-    // Add event listeners to family buttons
-    document.querySelectorAll('.family-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            selectFamily(btn.dataset.family);
-        });
-    });
     
     backBtn.addEventListener('click', backToFamilySelection);
     showOnlyFullCheckbox.addEventListener('change', renderWeekends);
@@ -263,8 +398,7 @@ function renderWeekends() {
         }).join('');
         
         card.innerHTML = `
-            <div class="weekend-date">${weekend.label}</div>
-            <div class="weekend-range">${formatDateRange(weekend.friday, weekend.sunday)}</div>
+            <div class="weekend-date">${formatDateRange(weekend.friday, weekend.sunday)}</div>
             <div class="family-availability">
                 ${familyCheckmarks}
             </div>
