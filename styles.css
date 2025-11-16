@@ -410,8 +410,31 @@ header h1 {
 .weekend-range {
     color: #6b7280;
     font-size: 1em;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     font-weight: 400;
+}
+
+.family-availability {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.family-check {
+    font-size: 0.9em;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.family-check.available {
+    color: #10b981;
+    font-weight: 500;
 }
 
 .weekend-status {
@@ -483,6 +506,108 @@ header h1 {
     text-align: center;
     color: white;
     padding: 40px;
+}
+
+/* Celebration Notification */
+.celebration-notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.celebration-content {
+    background: white;
+    padding: 48px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 24px 72px rgba(0,0,0,0.3),
+                0 12px 36px rgba(0,0,0,0.2);
+    animation: slideUp 0.5s ease-out;
+}
+
+.celebration-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.celebration-content h3 {
+    font-size: 2em;
+    color: #10b981;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.celebration-content p {
+    font-size: 1.2em;
+    color: #6b7280;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.full-weekends-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.full-weekend-item {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.full-weekend-item strong {
+    color: #047857;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.full-weekend-item span {
+    color: #065f46;
+    font-size: 0.95em;
+}
+
+.close-celebration {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 1.1em;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.close-celebration:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 .spinner {

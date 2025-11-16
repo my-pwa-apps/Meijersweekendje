@@ -34,6 +34,8 @@ const weekendGrid = document.getElementById('weekendGrid');
 const backBtn = document.getElementById('backBtn');
 const showOnlyFullCheckbox = document.getElementById('showOnlyFull');
 const loading = document.getElementById('loading');
+const celebration = document.getElementById('celebration');
+const closeCelebrationBtn = document.getElementById('closeCelebration');
 
 // No setup needed for Firebase - it's automatic!
 
@@ -102,6 +104,9 @@ async function init() {
     
     backBtn.addEventListener('click', backToFamilySelection);
     showOnlyFullCheckbox.addEventListener('change', renderWeekends);
+    closeCelebrationBtn.addEventListener('click', () => {
+        celebration.classList.add('hidden');
+    });
     
     loading.classList.add('hidden');
 }
@@ -198,16 +203,42 @@ function getAvailabilityCount(weekendId) {
     return availabilities.filter(a => a.weekend_id === weekendId).length;
 }
 
+function getAvailableFamilies(weekendId) {
+    return availabilities
+        .filter(a => a.weekend_id === weekendId)
+        .map(a => a.family);
+}
+
 function isSelectedByFamily(weekendId, family) {
     return availabilities.some(a => 
         a.weekend_id === weekendId && a.family === family
     );
 }
 
+function checkForCelebration() {
+    const fullWeekends = weekends.filter(weekend => {
+        return getAvailabilityCount(weekend.id) === 4;
+    });
+    
+    if (fullWeekends.length > 0) {
+        const fullWeekendsList = document.getElementById('fullWeekendsList');
+        fullWeekendsList.innerHTML = fullWeekends.map(weekend => {
+            return `<div class="full-weekend-item">
+                        <strong>${weekend.label}</strong>
+                        <span>${formatDateRange(weekend.friday, weekend.sunday)}</span>
+                    </div>`;
+        }).join('');
+        celebration.classList.remove('hidden');
+    }
+}
+
 function renderWeekends() {
     const showOnlyFull = showOnlyFullCheckbox.checked;
     
     weekendGrid.innerHTML = '';
+    
+    // Check if there's a weekend with all 4 families
+    checkForCelebration();
     
     weekends.forEach(weekend => {
         const count = getAvailabilityCount(weekend.id);
@@ -218,15 +249,25 @@ function renderWeekends() {
             return;
         }
         
+        const availableFamilies = getAvailableFamilies(weekend.id);
+        
         const card = document.createElement('div');
         card.className = `weekend-card availability-${count}`;
         if (isSelected) {
             card.classList.add('selected');
         }
         
+        const familyCheckmarks = families.map(family => {
+            const isAvailable = availableFamilies.includes(family);
+            return `<span class="family-check ${isAvailable ? 'available' : ''}">${family} ${isAvailable ? '✓' : ''}</span>`;
+        }).join('');
+        
         card.innerHTML = `
             <div class="weekend-date">${weekend.label}</div>
             <div class="weekend-range">${formatDateRange(weekend.friday, weekend.sunday)}</div>
+            <div class="family-availability">
+                ${familyCheckmarks}
+            </div>
             <div class="weekend-status">
                 <span class="status-count count-${count}">${count}/4 gezinnen</span>
                 <span class="checkmark">✓</span>
