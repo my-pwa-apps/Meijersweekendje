@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8e6cf;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#88d8b0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a9d8f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" fill="url(#grad)" rx="110"/>
+  
+  <!-- Calendar icon -->
+  <rect x="120" y="140" width="272" height="272" rx="20" fill="white" opacity="0.95"/>
+  
+  <!-- Calendar header -->
+  <rect x="120" y="140" width="272" height="60" rx="20" fill="#2c7a6b"/>
+  <rect x="120" y="180" width="272" height="20" fill="#2c7a6b"/>
+  
+  <!-- Calendar grid dots -->
+  <circle cx="180" cy="250" r="12" fill="#4a9d8f"/>
+  <circle cx="256" cy="250" r="12" fill="#4a9d8f"/>
+  <circle cx="332" cy="250" r="12" fill="#4a9d8f"/>
+  
+  <circle cx="180" cy="310" r="12" fill="#4a9d8f"/>
+  <circle cx="256" cy="310" r="12" fill="#4a9d8f"/>
+  <circle cx="332" cy="310" r="12" fill="#4a9d8f"/>
+  
+  <circle cx="180" cy="370" r="12" fill="#88d8b0"/>
+  <circle cx="256" cy="370" r="12" fill="#88d8b0"/>
+  
+  <!-- Checkmark overlay -->
+  <circle cx="350" cy="370" r="50" fill="#10b981"/>
+  <path d="M 330 370 L 345 385 L 370 355" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
