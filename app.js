@@ -206,27 +206,35 @@ async function loadConfig() {
             document.querySelector('header h1').textContent = config.app_name || 'Meijersweekendje';
             document.querySelector('.subtitle').textContent = config.app_subtitle || 'Vind het perfecte weekend voor de familie';
             document.title = config.app_name || 'Meijersweekendje';
-            
-            // Update family buttons
-            const familyButtonsContainer = document.querySelector('.family-buttons');
-            familyButtonsContainer.innerHTML = '';
-            families.forEach(family => {
-                const btn = document.createElement('button');
-                btn.className = 'family-btn';
-                btn.dataset.family = family;
-                btn.innerHTML = `
-                    <span class="material-icons">home</span>
-                    <span>${family}</span>
-                `;
-                btn.addEventListener('click', () => {
-                    selectFamily(family);
-                });
-                familyButtonsContainer.appendChild(btn);
-            });
+        } else {
+            console.log('No config found, using defaults');
         }
     } catch (error) {
         console.error('Error loading config:', error);
         // Use defaults if config fails to load
+    }
+    
+    // Always update family buttons (even with default families)
+    const familyButtonsContainer = document.querySelector('.family-buttons');
+    if (familyButtonsContainer) {
+        familyButtonsContainer.innerHTML = '';
+        families.forEach(family => {
+            const btn = document.createElement('button');
+            btn.className = 'family-btn';
+            btn.dataset.family = family;
+            btn.innerHTML = `
+                <span class="material-icons">home</span>
+                <span>${family}</span>
+            `;
+            btn.addEventListener('click', () => {
+                console.log('Family button clicked:', family);
+                selectFamily(family);
+            });
+            familyButtonsContainer.appendChild(btn);
+        });
+        console.log('Family buttons created:', families.length);
+    } else {
+        console.error('Family buttons container not found!');
     }
 }
 
