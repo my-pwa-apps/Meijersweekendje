@@ -233,7 +233,11 @@ function generateWeekends() {
 }
 
 function formatDateId(date) {
-    return date.toISOString().split('T')[0];
+    // Ensure we always get YYYY-MM-DD format
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 function formatWeekendLabel(friday) {
@@ -394,9 +398,12 @@ function setupRealtimeListener() {
         availabilities = [];
         if (data) {
             Object.keys(data).forEach(key => {
+                const record = data[key];
                 availabilities.push({
-                    id: key,
-                    ...data[key]
+                    firebaseId: key,
+                    weekend_id: record.weekend_id || record.id,
+                    family: record.family,
+                    created_at: record.created_at
                 });
             });
         }
@@ -442,9 +449,12 @@ async function loadAvailabilities() {
         if (snapshot.exists()) {
             const data = snapshot.val();
             Object.keys(data).forEach(key => {
+                const record = data[key];
                 availabilities.push({
-                    id: key,
-                    ...data[key]
+                    firebaseId: key,
+                    weekend_id: record.weekend_id || record.id,
+                    family: record.family,
+                    created_at: record.created_at
                 });
             });
         }
@@ -464,18 +474,18 @@ async function loadAvailabilities() {
 }
 
 function getAvailabilityCount(weekendId) {
-    return availabilities.filter(a => a.weekend_id === weekendId).length;
+    return availabilities.filter(a => (a.weekend_id || a.id) === weekendId).length;
 }
 
 function getAvailableFamilies(weekendId) {
     return availabilities
-        .filter(a => a.weekend_id === weekendId)
+        .filter(a => (a.weekend_id || a.id) === weekendId)
         .map(a => a.family);
 }
 
 function isSelectedByFamily(weekendId, family) {
     return availabilities.some(a => 
-        a.weekend_id === weekendId && a.family === family
+        (a.weekend_id || a.id) === weekendId && a.family === family
     );
 }
 
@@ -560,7 +570,8 @@ async function toggleWeekend(weekendId, isCurrentlySelected) {
                 const deletePromises = Object.keys(data)
                     .filter(key => {
                         const record = data[key];
-                        return record.weekend_id === weekendId && record.family === currentFamily;
+                        const recordId = record.weekend_id || record.id;
+                        return recordId === weekendId && record.family === currentFamily;
                     })
                     .map(key => remove(ref(db, `availability/${key}`)));
                 await Promise.all(deletePromises);
