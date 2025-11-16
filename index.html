@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#667eea">
+    <title>Meijersweekendje - Datefinder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Meijersweekendje</h1>
+            <p class="subtitle">Vind het perfecte weekend voor de familie</p>
+        </header>
+
+        <div id="familySelection" class="family-selection">
+            <h2>Selecteer je gezin</h2>
+            <div class="family-buttons">
+                <button class="family-btn" data-family="Hoorn">
+                    <span class="material-icons">home</span>
+                    <span>Hoorn</span>
+                </button>
+                <button class="family-btn" data-family="Limmen">
+                    <span class="material-icons">home</span>
+                    <span>Limmen</span>
+                </button>
+                <button class="family-btn" data-family="IJburg">
+                    <span class="material-icons">home</span>
+                    <span>IJburg</span>
+                </button>
+                <button class="family-btn" data-family="Versailles">
+                    <span class="material-icons">home</span>
+                    <span>Versailles</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="weekendView" class="weekend-view hidden">
+            <div class="view-header">
+                <h2>Welkom, <span id="selectedFamily"></span>!</h2>
+                <button id="backBtn" class="back-btn">
+                    <span class="material-icons">arrow_back</span>
+                    <span>Terug</span>
+                </button>
+            </div>
+
+            <div class="instructions">
+                <p>Klik op de weekenden waarop jullie beschikbaar zijn. Klik nogmaals om te deselecteren.</p>
+                <div class="legend">
+                    <span class="legend-item"><span class="dot all">●</span> Alle 4 gezinnen</span>
+                    <span class="legend-item"><span class="dot three">●</span> 3 gezinnen</span>
+                    <span class="legend-item"><span class="dot two">●</span> 2 gezinnen</span>
+                    <span class="legend-item"><span class="dot one">●</span> 1 gezin</span>
+                </div>
+            </div>
+
+            <div class="filters">
+                <label>
+                    <input type="checkbox" id="showOnlyFull">
+                    Toon alleen volledig beschikbare weekenden
+                </label>
+            </div>
+
+            <div id="weekendGrid" class="weekend-grid">
+                <!-- Weekends will be populated here by JavaScript -->
+            </div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Laden...</p>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
