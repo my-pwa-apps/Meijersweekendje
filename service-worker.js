@@ -1,12 +1,15 @@
 const CACHE_NAME = 'datumprikker-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/admin.html',
-  '/admin.css',
-  '/admin.js',
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './admin.html',
+  './admin.css',
+  './admin.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
   'https://fonts.googleapis.com/icon?family=Material+Icons'
 ];
@@ -82,7 +85,7 @@ self.addEventListener('fetch', (event) => {
       .catch((error) => {
         console.error('Fetch failed:', error);
         // Return offline page if available
-        return caches.match('/index.html');
+        return caches.match('./index.html');
       })
   );
 });
