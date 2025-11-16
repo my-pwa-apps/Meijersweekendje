@@ -1,4 +1,4 @@
-const CACHE_NAME = 'datumprikker-v2';
+const CACHE_NAME = 'datumprikker-v3';
 const urlsToCache = [
   './',
   './index.html',
