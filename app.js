@@ -37,11 +37,11 @@ const loading = document.getElementById('loading');
 
 // No setup needed for Firebase - it's automatic!
 
-// Generate all weekends from now until June 2026
+// Generate all weekends from now until December 2026
 function generateWeekends() {
     const weekends = [];
     const startDate = new Date();
-    const endDate = new Date('2026-06-30');
+    const endDate = new Date('2026-12-31');
     
     // Find the next Friday
     let currentDate = new Date(startDate);
