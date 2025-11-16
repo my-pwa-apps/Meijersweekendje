@@ -214,7 +214,7 @@ function renderWeekends() {
         const isSelected = isSelectedByFamily(weekend.id, currentFamily);
         
         // Filter logic
-        if (showOnlyFull && count < 4) {
+        if (showOnlyFull && count < 3) {
             return;
         }
         
