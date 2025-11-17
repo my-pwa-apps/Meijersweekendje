@@ -548,17 +548,36 @@ header h1 {
 }
 
 .weekend-card.selected {
-    background: linear-gradient(135deg, #f0fdf7 0%, #e6f9f2 100%);
     box-shadow: 0 8px 28px rgba(74, 157, 143, 0.25),
                 0 4px 14px rgba(74, 157, 143, 0.15),
-                0 0 0 1px rgba(74, 157, 143, 0.2) inset;
-    border-left: 6px solid #4a9d8f;
+                0 0 0 2px rgba(74, 157, 143, 0.3) inset;
 }
 
-.weekend-card.availability-4 { border-left: 4px solid #059669; }
-.weekend-card.availability-3 { border-left: 4px solid #2563eb; }
-.weekend-card.availability-2 { border-left: 4px solid #d97706; }
-.weekend-card.availability-1 { border-left: 4px solid #dc2626; }
+.weekend-card.availability-4 { 
+    border-left: 6px solid #059669; 
+}
+.weekend-card.availability-3 { 
+    border-left: 6px solid #2563eb; 
+}
+.weekend-card.availability-2 { 
+    border-left: 6px solid #d97706; 
+}
+.weekend-card.availability-1 { 
+    border-left: 6px solid #dc2626; 
+}
+
+.weekend-card.selected.availability-4 { 
+    border-left: 6px solid #059669; 
+}
+.weekend-card.selected.availability-3 { 
+    border-left: 6px solid #2563eb; 
+}
+.weekend-card.selected.availability-2 { 
+    border-left: 6px solid #d97706; 
+}
+.weekend-card.selected.availability-1 { 
+    border-left: 6px solid #dc2626; 
+}
 
 .weekend-date {
     font-size: 1.6em;
