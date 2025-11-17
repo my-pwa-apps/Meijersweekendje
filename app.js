@@ -329,7 +329,6 @@ async function loadConfig() {
             
             // Update page title
             document.querySelector('header h1').textContent = config.app_name || 'Meijersweekendje';
-            document.querySelector('.subtitle').textContent = config.app_subtitle || 'Vind het perfecte weekend voor de familie';
             document.title = config.app_name || 'Meijersweekendje';
         } else {
             console.log('No config found, using defaults');

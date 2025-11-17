@@ -34,7 +34,6 @@ const loading = document.getElementById('loading');
 
 // Config form elements
 const appNameInput = document.getElementById('appName');
-const appSubtitleInput = document.getElementById('appSubtitle');
 const accessCodeInput = document.getElementById('accessCode');
 const familiesList = document.getElementById('familiesList');
 const addFamilyBtn = document.getElementById('addFamilyBtn');
@@ -286,7 +285,6 @@ async function loadConfig() {
             
             // Load app info
             appNameInput.value = config.app_name || 'Meijersweekendje';
-            appSubtitleInput.value = config.app_subtitle || 'Vind het perfecte weekend voor de familie';
             accessCodeInput.value = config.access_code || '';
             
             // Load families
@@ -314,7 +312,6 @@ async function loadConfig() {
         } else {
             // Initialize with default values
             appNameInput.value = 'Meijersweekendje';
-            appSubtitleInput.value = 'Vind het perfecte weekend voor de familie';
             accessCodeInput.value = '';
             
             familiesList.innerHTML = '';
@@ -403,7 +400,6 @@ saveConfigBtn.addEventListener('click', async () => {
         // Create config object
         const config = {
             app_name: appNameInput.value.trim() || 'Datumprikker',
-            app_subtitle: appSubtitleInput.value.trim() || 'Vind de perfecte datum',
             access_code: accessCodeInput.value.trim().toUpperCase() || '',
             families: families,
             date_type: dateType,
